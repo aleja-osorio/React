@@ -1,70 +1,71 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
+//import './Form.css';
 
-function StudentForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    course: ''
-  });
+const Form = ({ onSubmit }) => {
+  const [nombre, setNombre] = useState('');
+  const [actividad, setActividad] = useState('');
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form data submitted:', formData);
+    // Validaciones
+    if (nombre.trim().length < 3) {
+      setError("El nombre debe tener al menos 3 caracteres.");
+      return;
+    }
+    if (actividad.trim().length < 3) {
+      setError("La actividad subacuática favorita debe tener al menos 3 caracteres.");
+      return;
+    }
+
+    // Si las validaciones pasan, enviamos los dato
+    setError('');
+    onSubmit({ nombre, actividad });
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '20px auto' }}>
-      <h2>Student Registration Form</h2>
-
-      <label>
-        Name:
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Nombre:</label>
         <input
           type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '8px' }}
+          value={nombre}
+          onChange={(event) => setNombre(event.target.value)}
         />
-      </label>
-
-      <label>
-        Email:
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '8px' }}
-        />
-      </label>
-
-      <label>
-        Course:
+      </div>
+      <div>
+        <label>Actividad subacuática favorita:</label>
         <input
           type="text"
-          name="course"
-          value={formData.course}
-          onChange={handleChange}
-          required
-          style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '8px' }}
+          value={actividad}
+          onChange={(event) => setActividad(event.target.value)}
         />
-      </label>
-
-      <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
-        Registrar
+      </div>
+      <button 
+        type="submit"
+        style={{
+          backgroundColor: 'blue',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          width: '100%',
+        }}
+      >
+        Enviar
       </button>
+      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
     </form>
   );
-}
+};
 
-export default StudentForm;
+// Validación de props con PropTypes
+Form.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default Form;
+
